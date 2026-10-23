@@ -1,0 +1,81 @@
+HELP.md
+target/
+.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### VS Code ###
+.vscode/
+
+
+# Environment variables and secrets
+.env
+.env.*
+!.env.example
+
+# Local application configuration
+application-local.properties
+application-local.yml
+application-secret.properties
+
+# Uploaded files and local storage
+uploads/
+upload/
+*.pdf
+
+# Python generated files
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+
+# Test and coverage reports
+.coverage
+htmlcov/
+.pytest_cache/
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Generated AI output and extracted document text
+ai_summary.txt
+extracted_text.txt
+
+# Python environment and local secrets
+.env
+.env.*
+!.env.example
+__pycache__/
+*.pyc
+.venv/
+venv/
