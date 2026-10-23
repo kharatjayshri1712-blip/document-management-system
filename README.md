@@ -1,19 +1,19 @@
 # Document Management System with AI PDF Summarization
 
-A secure document management application built using Spring Boot, Java, MySQL, JWT authentication, and a Python Flask AI service. The application supports document operations and AI-powered summarization of text and PDF documents.
+A backend application built with **Java 17, Spring Boot, Spring Security, JWT, MySQL, Python Flask, and Ollama**. The project provides document management REST APIs, metadata persistence, authentication, and AI-powered summarization for text and PDF documents.
+
+**Repository:** [GitHub – Document Management System](https://github.com/kharatjayshri1712-blip/document-management-system)
 
 ## Features
 
-- **JWT Authentication** — Secures protected API endpoints.
-- **Document Upload** — Upload documents through a REST API.
-- **Document Download** — Retrieve uploaded documents.
-- **Document Deletion** — Delete documents through the API.
-- **File Listing** — Retrieve a list of available files.
-- **File Metadata** — Store and retrieve file names, types, sizes, and upload timestamps.
-- **AI Text Summarization** — Generate summaries from supplied text.
-- **AI PDF Summarization** — Send a PDF filename to a Python Flask service for summarization.
-- **Input Validation and Error Handling** — Handle invalid requests, missing PDFs, and AI service failures.
-- **Automated Testing** — Test controller behavior using JUnit 5 and MockMvc.
+- **JWT Authentication:** Register and authenticate users and protect API endpoints.
+- **Document Management:** Upload, download, list, and delete documents through REST APIs.
+- **File Metadata:** Store and retrieve document names, content types, sizes, and upload timestamps using MySQL and Spring Data JPA.
+- **AI Text Summarization:** Send document text to a Python Flask service for summarization.
+- **AI PDF Summarization:** Extract PDF text using PyMuPDF and generate summaries with a locally hosted Ollama language model.
+- **Input Validation and Error Handling:** Handle invalid requests, missing files, empty document text, and AI service failures.
+- **API Documentation:** Explore and test endpoints using Swagger UI and OpenAPI.
+- **Automated Tests:** Spring Boot tests using JUnit 5 and MockMvc.
 
 ## Technology Stack
 
@@ -21,42 +21,57 @@ A secure document management application built using Spring Boot, Java, MySQL, J
 |---|---|
 | Java 17 | Backend programming |
 | Spring Boot 3.3.0 | REST API development |
-| Spring Security | API security |
-| JWT | Token-based authentication |
+| Spring Security and JWT | Authentication and authorization |
 | Spring Data JPA | Database persistence |
-| MySQL | File metadata storage |
+| MySQL | User and document metadata storage |
 | Python and Flask | AI summarization service |
-| Maven | Dependency management and builds |
-| Swagger / OpenAPI | API documentation and testing |
-| JUnit 5 and MockMvc | Automated tests |
-| IntelliJ IDEA | Development environment |
+| PyMuPDF | PDF text extraction |
+| Ollama — Qwen 2.5 1.5B | Local language model for summarization |
+| Maven | Build and dependency management |
+| Swagger / OpenAPI | API documentation |
+| JUnit 5 and MockMvc | Automated testing |
 
 ## Architecture
 
-The application consists of a Spring Boot backend and a separate Python Flask AI service.
+```mermaid
+flowchart TD
+    A[Client / Swagger UI] --> B[Spring Boot REST API]
+    B --> C[Spring Security + JWT]
+    B --> D[Document Management Service]
+    D --> E[Local File Storage]
+    D --> F[(MySQL Database)]
+    B --> G[AI Summary Service]
+    G --> H[Python Flask API]
+    H --> I[PyMuPDF PDF Extraction]
+    H --> J[Ollama Language Model]
+```
 
-1. A client sends requests to the Spring Boot REST API.
-2. Spring Security validates authentication for protected endpoints.
-3. The backend handles document operations and stores metadata in MySQL.
-4. For AI summarization, the backend communicates with the Python Flask service.
-5. The summarization result or an appropriate error response is returned to the client.
+### Request flow
+
+1. A client sends a request to the Spring Boot REST API.
+2. Spring Security checks authentication for protected endpoints.
+3. Document operations store files locally and persist metadata in MySQL.
+4. For summarization, Spring Boot sends text or a PDF filename to the Python Flask service.
+5. The Flask service extracts PDF text when necessary and requests a summary from Ollama.
+6. The generated summary or an error response is returned to the client.
 
 ## API Endpoints
 
 | Method | Endpoint | Description |
 |---|---|---|
 | POST | `/ai/summarize` | Summarize supplied text |
-| POST | `/ai/summarize-pdf` | Summarize a PDF using its filename |
+| POST | `/ai/summarize-pdf` | Summarize a PDF by filename |
 | GET | `/files` | List available files |
 | GET | `/files/metadata` | Retrieve file metadata |
+| POST | `/files/upload` | Upload a document |
 
-Additional endpoints support authentication and document upload, download, and deletion. Refer to the Swagger UI for their exact paths and request formats.
+Authentication, download, and deletion endpoints are also available. Open Swagger UI to view their exact routes, request formats, and security requirements.
 
-## Example: Text Summarization
+## Example API Requests
 
-**Request**
+### 1. Summarize text
 
-`POST /ai/summarize`
+**Request:** `POST /ai/summarize`
 
 ```json
 {
@@ -64,7 +79,7 @@ Additional endpoints support authentication and document upload, download, and d
 }
 ```
 
-**Example response**
+**Example response:**
 
 ```json
 {
@@ -72,11 +87,9 @@ Additional endpoints support authentication and document upload, download, and d
 }
 ```
 
-## Example: PDF Summarization
+### 2. Summarize a PDF
 
-**Request**
-
-`POST /ai/summarize-pdf`
+**Request:** `POST /ai/summarize-pdf`
 
 ```json
 {
@@ -84,7 +97,7 @@ Additional endpoints support authentication and document upload, download, and d
 }
 ```
 
-**Example response**
+**Example response:**
 
 ```json
 {
@@ -93,54 +106,150 @@ Additional endpoints support authentication and document upload, download, and d
 }
 ```
 
-The example summaries above illustrate the response format; actual summaries depend on the input document and AI service.
+The PDF must exist in the project's `uploads/` directory. Actual summaries depend on the document content and the language model output.
 
 ## Prerequisites
 
-Install the following before running the project:
+Install the following software before running the project:
 
 - Java JDK 17
-- Maven, or use the Maven wrapper if included
 - MySQL Server
-- Python and Flask for the AI service
-- IntelliJ IDEA or another Java IDE
+- Python 3
+- Maven, or use the Maven wrapper included in the repository
+- [Ollama](https://ollama.com/download)
+- Git
 
-## Setup and Configuration
+## Setup and Installation
 
-1. Clone the repository.
-2. Open the project in IntelliJ IDEA.
-3. Configure the MySQL connection in `application.properties` or `application.yml`.
-4. Create the database configured for the application.
-5. Configure the Python Flask service URL and any required environment variables.
-6. Start the Python AI service.
-7. Run the Spring Boot application.
-8. Open Swagger UI to explore and test the APIs.
+### Step 1: Clone the repository
 
-**Configuration note:** Keep database passwords, JWT signing secrets, and other credentials out of GitHub. Use environment variables or local configuration files excluded from version control.
+```bash
+git clone https://github.com/kharatjayshri1712-blip/document-management-system.git
+cd document-management-system
+```
+
+### Step 2: Create the MySQL database
+
+Open MySQL and run:
+
+```sql
+CREATE DATABASE document_management_db;
+```
+
+Configure the database username and password using environment variables. Do not commit real credentials to GitHub.
+
+In Windows PowerShell:
+
+```powershell
+$env:DB_USERNAME = "root"
+$env:DB_PASSWORD = "your_local_mysql_password"
+```
+
+Replace the example password with your actual local MySQL password.
+
+The application reads the database settings from `src/main/resources/application.properties`.
+
+### Step 3: Install Python dependencies
+
+From the project root, run:
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install -r requirements.txt
+```
+
+If PowerShell does not allow virtual environment activation, use the Python executable inside `.venv` directly to install the requirements.
+
+### Step 4: Prepare Ollama
+
+Download and install Ollama, then pull the model used by the application:
+
+```bash
+ollama pull qwen2.5:1.5b
+```
+
+Ensure Ollama is running and the model is available locally before testing AI summarization.
+
+### Step 5: Start the Python AI service
+
+From the project root, create the local upload directory if it does not exist:
+
+```powershell
+New-Item -ItemType Directory -Force uploads
+```
+
+Start Flask:
+
+```powershell
+python ai_service.py
+```
+
+The service runs at `http://127.0.0.1:5000`.
+
+Keep this terminal open while using the AI summarization endpoints.
+
+### Step 6: Start the Spring Boot application
+
+Open a second terminal in the project root and configure the database environment variables in that terminal as well.
+
+Run:
+
+```powershell
+.\mvnw.cmd spring-boot:run
+```
+
+Alternatively, if Maven is installed and configured:
+
+```bash
+mvn spring-boot:run
+```
+
+### Step 7: Open Swagger UI
+
+Once Spring Boot has started, open:
+
+[http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html)
+
+Use the available authentication endpoints to obtain a JWT token, then authorize protected requests in Swagger UI.
+
+To test PDF summarization, place a suitable PDF in the local `uploads/` directory before sending the request.
 
 ## Running Tests
 
-Run the tests from the project root using Maven:
+Run the automated Spring Boot tests from the project root:
 
-```bash
-mvn test
+```powershell
+.\mvnw.cmd test
 ```
 
-The current automated test suite contains 12 tests covering application startup, authentication enforcement, input validation, successful summarization responses, and error handling.
+The current project test milestone includes 12 passing Spring Boot tests. Controller tests using mocked services do not necessarily require a running MySQL instance, Flask service, or Ollama model.
 
-Some controller tests use mocked services to verify responses without requiring a real AI service or PDF file.
+## Configuration and Security
+
+- Keep database passwords, JWT signing secrets, AWS credentials, and other sensitive values out of version control.
+- Use environment variables for local secrets.
+- Keep uploaded documents, generated summaries, and build output out of Git.
+- Never upload private documents or confidential information to a public repository.
+
+## Current Implementation Notes
+
+- Document uploads currently use local filesystem storage.
+- AWS S3 configuration and service code are present in the project; verify and enable the S3 upload flow before relying on cloud storage.
+- AI summarization depends on the Python Flask service and a locally running Ollama model.
+- The application is currently configured for local development rather than a production deployment.
 
 ## Future Improvements
 
-- Add comprehensive integration tests against the real Python AI service.
-- Improve exception handling and structured logging.
-- Add pagination and search for documents.
-- Integrate and test Amazon S3 document storage.
-- Add Docker support.
+- Complete and test AWS S3 document storage.
+- Add Docker and Docker Compose for repeatable local setup.
+- Improve integration and end-to-end test coverage.
+- Add pagination and document search.
 - Introduce API Gateway and service discovery.
-- Explore asynchronous document processing with Kafka.
+- Explore asynchronous processing using Kafka.
 - Deploy the application to a cloud platform.
+- Add CI/CD automation.
 
 ## Project Goal
 
-This project demonstrates practical backend development skills, including REST API design, JWT authentication, database persistence, service integration, input validation, exception handling, and automated testing.
+This project demonstrates practical backend development skills in REST API design, JWT authentication, relational database persistence, document management, Python service integration, AI-powered PDF summarization, input validation, exception handling, and automated testing.
